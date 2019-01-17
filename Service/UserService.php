@@ -1,6 +1,6 @@
 <?php
 
-namespace UserBundle\Service;
+namespace FAC\UserBundle\Service;
 
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\UserBundle\Model\UserManagerInterface;
@@ -8,10 +8,10 @@ use JMS\Serializer\Tests\Fixtures\Log;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Twig_Environment;
-use UserBundle\Entity\AccessToken;
-use UserBundle\Entity\User;
-use UserBundle\Entity\UserEmail;
-use UserBundle\Repository\UserRepository;
+use FAC\UserBundle\Entity\AccessToken;
+use FAC\UserBundle\Entity\User;
+use FAC\UserBundle\Entity\UserEmail;
+use FAC\UserBundle\Repository\UserRepository;
 
 class UserService {
 

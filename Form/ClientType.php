@@ -1,6 +1,6 @@
 <?php
 
-namespace UserBundle\Form;
+namespace FAC\UserBundle\Form;
 
 
 use Symfony\Component\Form\AbstractType;
@@ -28,7 +28,7 @@ class ClientType extends AbstractType {
      */
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(array(
-            'data_class' => 'UserBundle\Entity\Client',
+            'data_class' => 'FAC\UserBundle\Entity\Client',
         ));
     }
 

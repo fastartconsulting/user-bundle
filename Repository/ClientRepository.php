@@ -1,12 +1,12 @@
 <?php
 
-namespace UserBundle\Repository;
+namespace FAC\UserBundle\Repository;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use LogBundle\Document\LogMonitor;
 use LogBundle\Service\LogMonitorService;
 use Schema\SchemaEntityRepository;
-use UserBundle\Entity\Client;
+use FAC\UserBundle\Entity\Client;
 use Utils\LogUtils;
 
 class ClientRepository extends SchemaEntityRepository {

@@ -1,6 +1,6 @@
 <?php
 
-namespace UserBundle\Controller;
+namespace FAC\UserBundle\Controller;
 
 use FOS\OAuthServerBundle\Event\OAuthEvent;
 use FOS\OAuthServerBundle\Form\Handler\AuthorizeFormHandler;
@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
-use UserBundle\Utils\ResponseUtils;
+use FAC\UserBundle\Utils\ResponseUtils;
 
 
 class AuthorizeController extends FOSRestController {

@@ -1,14 +1,14 @@
 <?php
 
-namespace UserBundle\Repository;
+namespace FAC\UserBundle\Repository;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use LogBundle\Document\LogMonitor;
 use LogBundle\Service\LogMonitorService;
 use ResourceBundle\Entity\CalendarTimezone;
 use Schema\SchemaEntityRepository;
-use UserBundle\Entity\User;
-use UserBundle\Service\UserService;
+use FAC\UserBundle\Entity\User;
+use FAC\UserBundle\Service\UserService;
 use Utils\LogUtils;
 
 class UserRepository  {

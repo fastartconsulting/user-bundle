@@ -1,9 +1,9 @@
 <?php
 
-namespace UserBundle\Service;
+namespace FAC\UserBundle\Service;
 
-use UserBundle\Entity\UserEmail;
-use UserBundle\Repository\UserEmailRepository;
+use FAC\UserBundle\Entity\UserEmail;
+use FAC\UserBundle\Repository\UserEmailRepository;
 use LogBundle\Service\LogMonitorService;
 use Schema\Entity;
 use Schema\EntityService;

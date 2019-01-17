@@ -1,6 +1,6 @@
 <?php
 
-namespace UserBundle\Utils;
+namespace FAC\UserBundle\Utils;
 
 
 use Symfony\Component\HttpFoundation\JsonResponse;

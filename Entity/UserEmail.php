@@ -1,25 +1,24 @@
 <?php
 
-namespace UserBundle\Entity;
+namespace FAC\UserBundle\Entity;
 
 use DateTime;
-use Schema\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use UserBundle\Entity\User;
+use FAC\UserBundle\Entity\User;
 
 /**
  * @ORM\Table(name="`user_emails`")
- * @ORM\Entity(repositoryClass="UserBundle\Repository\UserEmailRepository")
+ * @ORM\Entity(repositoryClass="FAC\UserBundle\Repository\UserEmailRepository")
  * @UniqueEntity(
  *     fields="email",
  *     message="exist.email",
  *     groups={"registration"}
  * )
  */
-class UserEmail extends Entity {
+class UserEmail {
 
     /**
      * @ORM\Column(name="`id`", type="integer")
@@ -41,7 +40,7 @@ class UserEmail extends Entity {
     private $email = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="UserBundle\Entity\User", inversedBy="userEmails")
+     * @ORM\ManyToOne(targetEntity="FAC\UserBundle\Entity\User", inversedBy="userEmails")
      * @ORM\JoinColumn(name="id_users", referencedColumnName="id", nullable=false)
      * @var User $user
      */
@@ -258,11 +257,11 @@ class UserEmail extends Entity {
     /**
      * Set user.
      *
-     * @param \UserBundle\Entity\User $user
+     * @param \FAC\UserBundle\Entity\User $user
      *
      * @return UserEmail
      */
-    public function setUser(\UserBundle\Entity\User $user)
+    public function setUser(\FAC\UserBundle\Entity\User $user)
     {
         $this->user = $user;
 
@@ -272,7 +271,7 @@ class UserEmail extends Entity {
     /**
      * Get user.
      *
-     * @return \UserBundle\Entity\User
+     * @return \FAC\UserBundle\Entity\User
      */
     public function getUser()
     {

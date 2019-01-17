@@ -1,12 +1,12 @@
 <?php
 
-namespace UserBundle\Repository;
+namespace FAC\UserBundle\Repository;
 
-use UserBundle\Entity\UserEmail;
+use FAC\UserBundle\Entity\UserEmail;
 use Schema\SchemaEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use DateTime;
-use UserBundle\Entity\User;
+use FAC\UserBundle\Entity\User;
 
 class UserEmailRepository extends SchemaEntityRepository {
 

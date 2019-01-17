@@ -1,9 +1,8 @@
 <?php
 
-namespace UserBundle\Entity;
+namespace FAC\UserBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use EmailBundle\Entity\Email;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
@@ -73,12 +72,7 @@ class User extends BaseUser {
     private $googleplusAccessToken;
 
     /**
-     * @ORM\OneToMany(targetEntity="EmailBundle\Entity\Email", mappedBy="user")
-     */
-    private $emails;
-
-    /**
-     * @ORM\OneToMany(targetEntity="UserBundle\Entity\UserEmail", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="FAC\UserBundle\Entity\UserEmail", mappedBy="user")
      */
     private $userEmails;
 
@@ -403,42 +397,6 @@ class User extends BaseUser {
     }
 
     /**
-     * Add email.
-     *
-     * @param Email $email
-     *
-     * @return User
-     */
-    public function addEmail(Email $email)
-    {
-        $this->emails[] = $email;
-
-        return $this;
-    }
-
-    /**
-     * Remove email.
-     *
-     * @param Email $email
-     *
-     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
-     */
-    public function removeEmail(Email $email)
-    {
-        return $this->emails->removeElement($email);
-    }
-
-    /**
-     * Get emails.
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getEmails()
-    {
-        return $this->emails;
-    }
-
-    /**
      * @param $boolean
      * @return $this
      */
@@ -556,11 +514,11 @@ class User extends BaseUser {
     /**
      * Add userEmail.
      *
-     * @param \UserBundle\Entity\UserEmail $userEmail
+     * @param \FAC\UserBundle\Entity\UserEmail $userEmail
      *
      * @return User
      */
-    public function addUserEmail(\UserBundle\Entity\UserEmail $userEmail)
+    public function addUserEmail(\FAC\UserBundle\Entity\UserEmail $userEmail)
     {
         $this->userEmails[] = $userEmail;
 
@@ -570,11 +528,11 @@ class User extends BaseUser {
     /**
      * Remove userEmail.
      *
-     * @param \UserBundle\Entity\UserEmail $userEmail
+     * @param \FAC\UserBundle\Entity\UserEmail $userEmail
      *
      * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
      */
-    public function removeUserEmail(\UserBundle\Entity\UserEmail $userEmail)
+    public function removeUserEmail(\FAC\UserBundle\Entity\UserEmail $userEmail)
     {
         return $this->userEmails->removeElement($userEmail);
     }

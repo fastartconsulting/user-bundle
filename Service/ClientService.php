@@ -1,14 +1,14 @@
 <?php
 
-namespace UserBundle\Service;
+namespace FAC\UserBundle\Service;
 
 
 use LogBundle\Service\LogMonitorService;
 use Schema\Entity;
 use Schema\EntityService;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use UserBundle\Entity\Client;
-use UserBundle\Repository\ClientRepository;
+use FAC\UserBundle\Entity\Client;
+use FAC\UserBundle\Repository\ClientRepository;
 use Utils\LogUtils;
 
 class ClientService extends EntityService {

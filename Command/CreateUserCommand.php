@@ -1,6 +1,6 @@
 <?php
 
-namespace UserBundle\Command;
+namespace FAC\UserBundle\Command;
 
 
 use ResourceBundle\Entity\CalendarTimezone;
@@ -10,9 +10,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use UserBundle\Entity\Client;
-use UserBundle\Entity\User;
-use UserBundle\Service\UserService;
+use FAC\UserBundle\Entity\Client;
+use FAC\UserBundle\Entity\User;
+use FAC\UserBundle\Service\UserService;
 use Utils\Utils;
 
 class CreateUserCommand extends Command{

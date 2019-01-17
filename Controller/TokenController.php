@@ -1,14 +1,14 @@
 <?php
 
-namespace UserBundle\Controller;
+namespace FAC\UserBundle\Controller;
 
 
 use FOS\OAuthServerBundle\Controller\TokenController as BaseController;
 use OAuth2\OAuth2;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use UserBundle\Entity\Client;
-use UserBundle\Service\ClientService;
+use FAC\UserBundle\Entity\Client;
+use FAC\UserBundle\Service\ClientService;
 use Utils\CurlUtils;
 
 class TokenController extends BaseController {
@@ -26,7 +26,7 @@ class TokenController extends BaseController {
         $server = $container->get("fos_oauth_server.server.public");
 
         parent::__construct($server);
-        $this->clientService = $container->get("UserBundle\Service\ClientService");
+        $this->clientService = $container->get("FAC\UserBundle\Service\ClientService");
     }
 
     public function tokenAction(Request $request) {

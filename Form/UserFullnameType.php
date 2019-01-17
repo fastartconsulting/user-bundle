@@ -1,6 +1,6 @@
 <?php
 
-namespace UserBundle\Form;
+namespace FAC\UserBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -23,7 +23,7 @@ class UserFullnameType extends AbstractType {
      */
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(array(
-            'data_class' => 'UserBundle\Entity\User',
+            'data_class' => 'FAC\UserBundle\Entity\User',
             'validation_groups' => array('full_name'),
         ));
     }

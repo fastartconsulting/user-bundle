@@ -1,6 +1,6 @@
 <?php
 
-namespace UserBundle\Entity;
+namespace FAC\UserBundle\Entity;
 
 use FOS\OAuthServerBundle\Entity\AuthCode as BaseAuthCode;
 use Doctrine\ORM\Mapping as ORM;

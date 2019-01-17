@@ -1,24 +1,24 @@
 <?php
 
-namespace UserBundle\Controller;
+namespace FAC\UserBundle\Controller;
 
 use Exceptions\ValidationException;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
-use UserBundle\Entity\UserEmail;
-use UserBundle\Form\EmailType;
-use UserBundle\Entity\Client;
-use UserBundle\Form\UserFullnameType;
-use UserBundle\Service\ClientService;
-use UserBundle\Service\UserEmailService;
-use UserBundle\Service\UserService;
+use FAC\UserBundle\Entity\UserEmail;
+use FAC\UserBundle\Form\EmailType;
+use FAC\UserBundle\Entity\Client;
+use FAC\UserBundle\Form\UserFullnameType;
+use FAC\UserBundle\Service\ClientService;
+use FAC\UserBundle\Service\UserEmailService;
+use FAC\UserBundle\Service\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
-use UserBundle\Entity\User;
-use UserBundle\Form\UserType;
-use UserBundle\Utils\ResponseUtils;
-use UserBundle\Utils\Utils;
+use FAC\UserBundle\Entity\User;
+use FAC\UserBundle\Form\UserType;
+use FAC\UserBundle\Utils\ResponseUtils;
+use FAC\UserBundle\Utils\Utils;
 use Swagger\Annotations as SWG;
 use Nelmio\ApiDocBundle\Annotation\Model;
 

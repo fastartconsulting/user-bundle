@@ -1,9 +1,9 @@
 <?php
 
-namespace UserBundle\Security;
+namespace FAC\UserBundle\Security;
 
-use FOS\UserBundle\Security\UserProvider;
-use UserBundle\Entity\User;
+use FAC\UserBundle\Security\UserProvider;
+use FAC\UserBundle\Entity\User;
 
 class EmailUserProvider extends UserProvider {
 

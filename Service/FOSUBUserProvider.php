@@ -1,6 +1,6 @@
 <?php
 
-namespace UserBundle\Service;
+namespace FAC\UserBundle\Service;
 
 
 use HWI\Bundle\OAuthBundle\OAuth\Response\UserResponseInterface;

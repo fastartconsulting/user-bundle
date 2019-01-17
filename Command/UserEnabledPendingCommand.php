@@ -1,14 +1,14 @@
 <?php
 
-namespace UserBundle\Command;
+namespace FAC\UserBundle\Command;
 
 use LogBundle\Document\LogMonitor;
 use LogBundle\Service\LogMonitorService;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use UserBundle\Entity\User;
-use UserBundle\Service\UserService;
+use FAC\UserBundle\Entity\User;
+use FAC\UserBundle\Service\UserService;
 use Utils\LogUtils;
 
 class UserEnabledPendingCommand extends ContainerAwareCommand  {

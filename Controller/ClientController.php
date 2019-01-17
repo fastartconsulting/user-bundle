@@ -1,6 +1,6 @@
 <?php
 
-namespace UserBundle\Controller;
+namespace FAC\UserBundle\Controller;
 
 
 use Exceptions\ValidationException;
@@ -8,11 +8,11 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use UserBundle\Entity\Client;
-use UserBundle\Form\ClientType;
-use UserBundle\Service\ClientService;
-use UserBundle\Utils\ResponseUtils;
-use UserBundle\Utils\Utils;
+use FAC\UserBundle\Entity\Client;
+use FAC\UserBundle\Form\ClientType;
+use FAC\UserBundle\Service\ClientService;
+use FAC\UserBundle\Utils\ResponseUtils;
+use FAC\UserBundle\Utils\Utils;
 use Swagger\Annotations as SWG;
 use Nelmio\ApiDocBundle\Annotation\Model;
 

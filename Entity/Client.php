@@ -1,6 +1,6 @@
 <?php
 
-namespace UserBundle\Entity;
+namespace FAC\UserBundle\Entity;
 
 use DateTime;
 use FOS\OAuthServerBundle\Entity\Client as BaseClient;
@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table("clients")
- * @ORM\Entity(repositoryClass="UserBundle\Repository\ClientRepository")
+ * @ORM\Entity(repositoryClass="FAC\UserBundle\Repository\ClientRepository")
  * @ORM\Entity
  */
 class Client extends BaseClient {
