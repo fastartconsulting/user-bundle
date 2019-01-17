@@ -1,0 +1,20 @@
+{
+    "name": "fastartconsulting/user-bundle",
+    "description": "FastArtConsulting Symfony UserBundle",
+    "type": "symfony-bundle",
+    "require": {
+        "friendsofsymfony/oauth-server-bundle": "^1.5",
+        "friendsofsymfony/rest-bundle": "^2.3",
+        "friendsofsymfony/user-bundle": "^2.0",
+        "jms/serializer-bundle": "^2.3",
+        "nelmio/api-doc-bundle": "^3.0",
+        "nelmio/cors-bundle": "^1.5"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "lmangiacotti",
+            "email": "luca.mangiacotti@fastartconsulting.com"
+        }
+    ]
+}
