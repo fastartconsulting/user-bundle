@@ -10,6 +10,11 @@
         "nelmio/api-doc-bundle": "^3.0",
         "nelmio/cors-bundle": "^1.5"
     },
+    "autoload": {
+        "psr-4": {
+            "FAC\\UserBundle\\": ""
+        }
+    },
     "license": "MIT",
     "authors": [
         {
