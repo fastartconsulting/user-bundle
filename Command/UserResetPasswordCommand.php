@@ -3,36 +3,24 @@
 namespace FAC\UserBundle\Command;
 
 
-use LogBundle\Document\LogMonitor;
-use LogBundle\Service\LogMonitorService;
-use ProfileBundle\Document\Profile;
-use ProfileBundle\Service\ProfileService;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use FAC\UserBundle\Entity\User;
 use FAC\UserBundle\Service\UserService;
-use Utils\LogUtils;
 
 class UserResetPasswordCommand extends ContainerAwareCommand  {
 
     /** @var UserService $userService */
     private $userService;
 
-    /** @var LogMonitorService $log_monitor */
-    private $log_monitor;
-
     /**
      * UserResetPasswordCommand constructor.
      * @param UserService $userService
-     * @param LogMonitorService $logMonitorService
      */
-    public function __construct(UserService $userService,
-                                LogMonitorService $logMonitorService
-    ) {
+    public function __construct(UserService $userService) {
         $this->userService    = $userService;
-        $this->log_monitor    = $logMonitorService;
 
         parent::__construct();
     }
@@ -50,7 +38,7 @@ class UserResetPasswordCommand extends ContainerAwareCommand  {
         $id_user = (int)$input->getArgument('id_user');
 
         /** @var User $user */
-        $user = $this->userService->getById($id_user);
+        $user = $this->userService->getOneB($id_user);
 
         if(is_null($user)) {
             $output->writeln('The user does not exist');
@@ -74,8 +62,7 @@ class UserResetPasswordCommand extends ContainerAwareCommand  {
                     $output->writeln('The new password is '. $plain_password);
                 }
             } catch (\Exception $e) {
-                $exception = LogUtils::getFormattedExceptions($e);
-                $this->log_monitor->trace(LogMonitor::LOG_CHANNEL_ERROR, 500, "remove.error", $exception);
+                $output->writeln('Error in saving operation');
             }
 
         }

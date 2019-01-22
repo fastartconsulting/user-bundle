@@ -169,6 +169,9 @@ php bin/console server:start
 
 you can see the API's on 127.0.0.1/doc
 
+Our integrations
+------------
+
 License
 -------
 

@@ -3,6 +3,7 @@
 namespace FAC\UserBundle\Command;
 
 
+use FOS\OAuthServerBundle\Entity\ClientManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -42,6 +43,7 @@ class ClientCreateCommand extends Command{
             '',
         ]);
 
+        /** @var ClientManager $clientManager */
         $clientManager = $this->getApplication()->getKernel()->getContainer()->get('fos_oauth_server.client_manager.default');
         /** @var Client $client */
         $client = $clientManager->createClient();

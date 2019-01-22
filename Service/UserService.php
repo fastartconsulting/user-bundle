@@ -2,15 +2,13 @@
 
 namespace FAC\UserBundle\Service;
 
-use FOS\RestBundle\Controller\FOSRestController;
+use FAC\UserBundle\Utils\Utils;
 use FOS\UserBundle\Model\UserManagerInterface;
-use JMS\Serializer\Tests\Fixtures\Log;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Swift_Mailer;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Twig_Environment;
 use FAC\UserBundle\Entity\AccessToken;
 use FAC\UserBundle\Entity\User;
-use FAC\UserBundle\Entity\UserEmail;
 use FAC\UserBundle\Repository\UserRepository;
 
 class UserService {
@@ -80,6 +78,40 @@ class UserService {
         $this->templating        = $templating;
         $this->userEmailService  = $userEmailService;
         $this->uri               = "";
+    }
+
+    /**
+     * Returns the entity given a unique attribute/s.
+     * NULL will be returned if the entity does not exist.
+     * @param array $attributes
+     * @return User|null
+     */
+    public function getOneByAttributes(array $attributes) {
+        return $this->repository->findOne($attributes);
+    }
+
+    /**
+     * Finalize and save the creation of the entity.
+     * Returns NULL if some error occurs otherwise it returns the persisted object.
+     * @param User $entity
+     * @param User|null $user
+     * @param bool $update
+     * @return object|bool
+     * @throws \Exception
+     */
+    public function save(User $entity, $update = false) {
+        $current_time = new \DateTime();
+        $current_time->setTimestamp(time());
+        if(!$update) {
+            $entity->setCreatedOn($current_time);
+        }
+
+        $writing = $this->repository->write($entity, $update);
+        if(is_array($writing)) {
+            return false;
+        }
+
+        return $entity;
     }
 
     /**
@@ -254,7 +286,6 @@ class UserService {
      * @param  User $user
      * @param  $token
      * @return User|null $user
-     * @throws \Doctrine\DBAL\ConnectionException
      */
     public function sendMailRegistrationConfirm(User $user, $token) {
         $url = $this->urlConfirmRegistration($user, $token);
@@ -283,9 +314,7 @@ class UserService {
                     return null;
             }
 
-        } catch (Exception $e) {
-
-
+        } catch (\Exception $e) {
             return null;
         }
 
@@ -336,28 +365,26 @@ class UserService {
      * Given the user and relative token confirms email validity
      * @param  User $user
      * @param  string $token
-     * @param  $profileService
      * @return bool
      * @throws \Doctrine\DBAL\ConnectionException
      */
-    public function confirmCreate(User $user, $token, $profileService = null) {
+    public function confirmCreate(User $user, $token) {
         if($user->getConfirmationToken() != $token)
             return false;
 
         $user->setEnabled(true);
         $user->setConfirmationToken($this->generateToken($user));
 
-        /*$profile = $profileService->getOneByAttributes(array('idUser' => $user->getId()));
-        if(is_null($profile)) {
-            return false;
-        }*/
-
-        $exception = $this->repository->enableUser($user, null);
+        $exception = $this->repository->enableUser($user);
         if(is_array($exception)) {
             return false;
         }
 
-        if(!$this->userEmailService->create($user, $user->getEmail(), true)){
+        try {
+            if (!$this->userEmailService->create($user, $user->getEmail(), true)) {
+                return false;
+            }
+        } catch (\Exception $e) {
             return false;
         }
 
@@ -446,6 +473,7 @@ class UserService {
      * @param User $user
      * @return User|null
      * @throws \Doctrine\DBAL\ConnectionException
+     * @throws \Exception
      */
     public function reset($user) {
         /** @var User $user */
@@ -504,6 +532,7 @@ class UserService {
     /**
      * Update credentials.
      * @param User $user
+     * @throws \Exception
      */
     public function updateCredentials(User $user) {
         $expiration = new \DateTime();
@@ -523,6 +552,7 @@ class UserService {
      * @param string $token
      * @return bool
      * @throws \Doctrine\DBAL\ConnectionException
+     * @throws \Exception
      */
     public function confirmReset(User $user, $token) {
         if($user->getConfirmationToken() != $token)
@@ -556,6 +586,7 @@ class UserService {
 
     /**
      * @return array|mixed
+     * @throws \Exception
      */
     public function getAllOldPending () {
         return $this->repository->findAllOldPending();
@@ -578,7 +609,6 @@ class UserService {
      * @param User $user
      * @param $email
      * @return User|null $user
-     * @throws \Doctrine\DBAL\ConnectionException
      */
     public function sendMailChangeEmailConfirm(User $user, $email) {
         $token = $this->confirmationToken($user);

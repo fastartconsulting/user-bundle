@@ -7,9 +7,6 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
 use FAC\UserBundle\Entity\UserEmail;
 use FAC\UserBundle\Form\EmailType;
-use FAC\UserBundle\Entity\Client;
-use FAC\UserBundle\Form\UserFullnameType;
-use FAC\UserBundle\Service\ClientService;
 use FAC\UserBundle\Service\UserEmailService;
 use FAC\UserBundle\Service\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -231,7 +228,7 @@ class UserController extends FOSRestController {
             return $response->getResponse(array(), "user.already.enabled",403);
         }
 
-        if(!$userService->confirmCreate($user, $token, null)) {
+        if(!$userService->confirmCreate($user, $token)) {
             return $response->getResponse(array(), "token.expired",400);
         }
 
@@ -272,8 +269,9 @@ class UserController extends FOSRestController {
      * @param   UserService $userService
      * @return  JsonResponse
      * @throws \Doctrine\DBAL\ConnectionException
+     * @throws \Exception
      */
-    public function resendMailConfirmationAction($email, UserService  $userService, EmailService $emailService) {
+    public function resendMailConfirmationAction($email, UserService  $userService) {
         $response = new ResponseUtils($this->get("translator"));
 
         if(!Utils::checkEmailString($email)) {
@@ -290,10 +288,10 @@ class UserController extends FOSRestController {
             return $response->getResponse(array(), "error.email.invalid",400);
         }
 
-        $just_sent_confirmation = $emailService->getJustSentConfirmation($user);
+        /*$just_sent_confirmation = $emailService->getJustSentConfirmation($user);
         if($just_sent_confirmation) {
             return $response->getResponse(array(), "error.email.invalid",400);
-        }
+        }*/
 
         $token = $userService->confirmationToken($user);
         $user = $userService->sendMailRegistrationConfirm($user, $token);
@@ -556,7 +554,7 @@ class UserController extends FOSRestController {
      * @param  UserService $userService
      * @param  ValidationException $validationException
      * @return JsonResponse
-     * @throws \Doctrine\DBAL\ConnectionException
+     * @throws \Exception
      */
     public function refreshAction(Request $request, UserService $userService, ValidationException $validationException) {
         $response = new ResponseUtils($this->get("translator"));
@@ -723,9 +721,9 @@ class UserController extends FOSRestController {
      * @param   UserEmailService $userEmailService
      * @param   UserService $userService
      * @return  JsonResponse
-     * @throws \Doctrine\DBAL\ConnectionException
+     * @throws \Exception
      */
-    public function updateEmailAction(User $user=null, $id,
+    public function updateEmailAction(User $user = null, $id,
                                       $email,
                                       UserEmailService $userEmailService,
                                       UserService $userService
@@ -857,7 +855,7 @@ class UserController extends FOSRestController {
      * @param   UserEmailService $userEmailService
      * @param   ValidationException $validationException
      * @return  JsonResponse
-     * @throws \Doctrine\DBAL\ConnectionException
+     * @throws \Exception
      */
     public function resetEmailConfirmAction(User $user, $id_user, $email, $token, UserService $userService, UserEmailService $userEmailService, ValidationException $validationException) {
         $response = new ResponseUtils($this->get("translator"));
@@ -909,7 +907,7 @@ class UserController extends FOSRestController {
             return $response->getResponse(array(), "error.save", 500);
         }
 
-        $user = $userService->save($user, $user, true);
+        $user = $userService->save($user, true);
         if(!$user) {
             return $response->getResponse(array(), "error.save",500);
         }

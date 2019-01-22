@@ -3,18 +3,18 @@
 namespace FAC\UserBundle\Service;
 
 
+use FAC\UserBundle\Utils\Utils;
+use FOS\OAuthServerBundle\Entity\ClientManager;
 use LogBundle\Service\LogMonitorService;
-use Schema\Entity;
-use Schema\EntityService;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use FAC\UserBundle\Entity\Client;
 use FAC\UserBundle\Repository\ClientRepository;
-use Utils\LogUtils;
 
-class ClientService extends EntityService {
+class ClientService {
 
     /** @var LogMonitorService $log_monitor */
     protected $log_monitor;
+
+    private $repository;
 
     ///////////////////////////////////////////
     /// CONSTRUCTOR
@@ -22,95 +22,32 @@ class ClientService extends EntityService {
     /**
      * ClientService constructor.
      * @param ClientRepository $repository
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param LogMonitorService $logMonitorService
      */
-    public function __construct(ClientRepository $repository,
-                                AuthorizationCheckerInterface $authorizationChecker,
-                                LogMonitorService $logMonitorService
-    ) {
+    public function __construct(ClientRepository $repository) {
         $this->repository  = $repository;
-        parent::__construct($repository, $authorizationChecker, $logMonitorService);
+    }
 
-        $this->log_monitor = $logMonitorService;
+    ///////////////////////////////////////////
+    /// SELECT FUNCTIONS
+
+    /**
+     * Returns the entity given its id.
+     * NULL will be returned if the entity does not exist.
+     * @param int $id
+     * @return Client|null
+     */
+    public function getById($id) {
+        return $this->repository->findOne(array('id' => $id));
     }
 
     /**
-     * Returns true if the logged user is the creator of this entity.
-     * @param Entity $entity
-     * @return bool
+     * Returns the entity given a unique attribute/s.
+     * NULL will be returned if the entity does not exist.
+     * @param array $attributes
+     * @return Client|null
      */
-    public function isOwner(Entity $entity)
-    {
-        // TODO: Implement isOwner() method.
-    }
-
-    /**
-     * Returns true if the logged user can administrate the entity
-     * @param Entity $entity
-     * @return bool
-     */
-    public function canAdmin(Entity $entity)
-    {
-        // TODO: Implement canAdmin() method.
-    }
-
-    /**
-     * Returns true if the logged user can POST the entity
-     * @return bool
-     */
-    public function canPost()
-    {
-        // TODO: Implement canPost() method.
-    }
-
-    /**
-     * Returns true if the logged user can PUT the entity
-     * @param Entity $entity
-     * @return bool
-     */
-    public function canPut(Entity $entity)
-    {
-        // TODO: Implement canPut() method.
-    }
-
-    /**
-     * Returns true if the logged user can PATCH the entity
-     * @param Entity $entity
-     * @return bool
-     */
-    public function canPatch(Entity $entity)
-    {
-        // TODO: Implement canPatch() method.
-    }
-
-    /**
-     * Returns true if the logged user can DELETE the entity
-     * @param Entity $entity
-     * @return bool
-     */
-    public function canDelete(Entity $entity)
-    {
-        // TODO: Implement canDelete() method.
-    }
-
-    /**
-     * Returns true if the logged user can GET the entity
-     * @param Entity $entity
-     * @return bool
-     */
-    public function canGet(Entity $entity)
-    {
-        // TODO: Implement canGet() method.
-    }
-
-    /**
-     * Returns true if the logged user can GET a list of this entity
-     * @return bool
-     */
-    public function canGetList()
-    {
-        // TODO: Implement canGetList() method.
+    public function getOneByAttributes(array $attributes) {
+        return $this->repository->findOne($attributes);
     }
 
 
@@ -119,7 +56,7 @@ class ClientService extends EntityService {
      * @param Client $client
      * @return Client|array
      */
-    public function create($clientManager, Client $client){
+    public function create(ClientManager $clientManager, Client $client){
         $newClient = $clientManager->createClient();
         $newClient->setKeyword($client->getKeyword());
         $newClient->setRedirectUris($client->getRedirectUris());
@@ -128,7 +65,7 @@ class ClientService extends EntityService {
         try{
             $clientManager->updateClient($newClient);
         }catch (\Exception $e){
-            $exception = LogUtils::getFormattedExceptions($e);
+            $exception = Utils::getFormattedExceptions($e);
             return $exception;
         }
 
@@ -154,26 +91,4 @@ class ClientService extends EntityService {
 
         return $client;
     }
-
-    /**
-     * @param $client
-     * @return bool
-     */
-    public function isExternalClient (&$client) {
-
-        if(!is_null($client)) {
-
-            /**
-             * Get Keyword of client and check if it is for Cardio
-             */
-            $keyword = $client->getKeyword();
-
-            if(stripos($keyword,"cardio") !== false) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
 }

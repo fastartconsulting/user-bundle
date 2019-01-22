@@ -2,106 +2,62 @@
 
 namespace FAC\UserBundle\Service;
 
+use FAC\UserBundle\Entity\User;
 use FAC\UserBundle\Entity\UserEmail;
 use FAC\UserBundle\Repository\UserEmailRepository;
-use LogBundle\Service\LogMonitorService;
-use Schema\Entity;
-use Schema\EntityService;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use DateTime;
 
-class UserEmailService extends EntityService {
+class UserEmailService {
 
+    private $repository;
 
     ///////////////////////////////////////////
     /// CONSTRUCTOR
 
     /**
      * @param UserEmailRepository $repository
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param LogMonitorService $logMonitorService
      */
-    public function __construct(UserEmailRepository $repository, AuthorizationCheckerInterface $authorizationChecker, LogMonitorService $logMonitorService) {
+    public function __construct(UserEmailRepository $repository) {
         $this->repository = $repository;
-        parent::__construct($repository, $authorizationChecker, $logMonitorService);
     }
 
     /**
-     * Returns true if the logged user is the creator of this entity.
-     * @param Entity $entity
-     * @return bool
+     * Returns the entity given a unique attribute/s.
+     * NULL will be returned if the entity does not exist.
+     * @param array $attributes
+     * @return UserEmail|null
      */
-    public function isOwner(Entity $entity)
-    {
-        // TODO: Implement isOwner() method.
+    public function getOneByAttributes(array $attributes) {
+        return $this->repository->findOne($attributes);
     }
 
-    /**
-     * Returns true if the logged user can administrate the entity
-     * @param Entity $entity
-     * @return bool
-     */
-    public function canAdmin(Entity $entity)
-    {
-        // TODO: Implement canAdmin() method.
-    }
+    ///////////////////////////////////////////
+    /// OBJECT FUNCTIONS
 
     /**
-     * Returns true if the logged user can POST the entity
-     * @return bool
+     * Finalize and save the creation of the entity.
+     * Returns NULL if some error occurs otherwise it returns the persisted object.
+     * @param UserEmail $entity
+     * @param User|null $user
+     * @param bool $update
+     * @return object|bool
+     * @throws \Exception
      */
-    public function canPost()
-    {
-        // TODO: Implement canPost() method.
-    }
+    public function save(UserEmail $entity, User $user = null, $update = false) {
+        if(!is_null($user)) {
+            $current_time = new \DateTime();
+            $current_time->setTimestamp(time());
+            if(!$update) {
+                $entity->setCreatedOn($current_time);
+            }
+        }
 
-    /**
-     * Returns true if the logged user can PUT the entity
-     * @param Entity $entity
-     * @return bool
-     */
-    public function canPut(Entity $entity)
-    {
-        // TODO: Implement canPut() method.
-    }
+        $writing = $this->repository->write($entity, $update);
+        if(is_array($writing)) {
+            return false;
+        }
 
-    /**
-     * Returns true if the logged user can PATCH the entity
-     * @param Entity $entity
-     * @return bool
-     */
-    public function canPatch(Entity $entity)
-    {
-        // TODO: Implement canPatch() method.
-    }
-
-    /**
-     * Returns true if the logged user can DELETE the entity
-     * @param Entity $entity
-     * @return bool
-     */
-    public function canDelete(Entity $entity)
-    {
-        // TODO: Implement canDelete() method.
-    }
-
-    /**
-     * Returns true if the logged user can GET the entity
-     * @param Entity $entity
-     * @return bool
-     */
-    public function canGet(Entity $entity)
-    {
-        // TODO: Implement canGet() method.
-    }
-
-    /**
-     * Returns true if the logged user can GET a list of this entity
-     * @return bool
-     */
-    public function canGetList()
-    {
-        // TODO: Implement canGetList() method.
+        return $entity;
     }
 
     /**
@@ -109,7 +65,7 @@ class UserEmailService extends EntityService {
      * @param null $email
      * @param bool $active
      * @return null|object
-     * @throws \Doctrine\DBAL\ConnectionException
+     * @throws \Exception
      */
     public function create($user, $email, $active = false) {
         $creation = new DateTime();
@@ -128,7 +84,7 @@ class UserEmailService extends EntityService {
      * @param UserEmail $userEmail
      * @param bool $active
      * @return null|object
-     * @throws \Doctrine\DBAL\ConnectionException
+     * @throws \Exception
      */
     public function updateStatus(UserEmail $userEmail, $active = false) {
         $userEmail->setIsActive($active);

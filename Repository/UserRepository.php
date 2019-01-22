@@ -2,16 +2,13 @@
 
 namespace FAC\UserBundle\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use LogBundle\Document\LogMonitor;
-use LogBundle\Service\LogMonitorService;
-use ResourceBundle\Entity\CalendarTimezone;
-use Schema\SchemaEntityRepository;
 use FAC\UserBundle\Entity\User;
 use FAC\UserBundle\Service\UserService;
-use Utils\LogUtils;
+use FAC\UserBundle\Utils\Utils;
 
-class UserRepository  {
+class UserRepository extends ServiceEntityRepository  {
 
     ///////////////////////////////////////////
     /// CONSTRUCTOR
@@ -21,7 +18,35 @@ class UserRepository  {
      * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry) {
+        parent::__construct($registry, User::class);
+    }
 
+    ///////////////////////////////////////////
+    /// OBJECT FUNCTIONS
+
+    /**
+     * Saves a given entity.
+     * @param User $entity
+     * @param bool $update
+     * @return bool|array
+     * @throws \Doctrine\DBAL\ConnectionException
+     */
+    public function write(User $entity, $update = false) {
+        $this->getEntityManager()->getConnection()->beginTransaction();
+
+        try {
+            if(!$update) {
+                $this->getEntityManager()->persist($entity);
+            }
+            $this->getEntityManager()->flush();
+            $this->getEntityManager()->getConnection()->commit();
+        } catch (\Exception $e) {
+            $exception = Utils::getFormattedExceptions($e);
+            $this->getEntityManager()->getConnection()->rollBack();
+            return $exception;
+        }
+
+        return true;
     }
 
     /**
@@ -41,10 +66,10 @@ class UserRepository  {
 
             try {
                 $this->getEntityManager()->flush();
-                /*$profile = $this->profileService->create($user, $calendarTimezone, $keyword);*/
+
                 $user = $userService->sendMailRegistrationConfirm($user, $token);
             } catch (\Exception $e) {
-                $exception = LogUtils::getFormattedExceptions($e);
+                $exception = Utils::getFormattedExceptions($e);
                 $this->getEntityManager()->getConnection()->rollBack();
                 return $exception;
             }
@@ -52,11 +77,8 @@ class UserRepository  {
             $this->getEntityManager()->getConnection()->commit();
 
         } catch (\Exception $e) {
-            $exception = LogUtils::getFormattedExceptions($e);
+            $exception = Utils::getFormattedExceptions($e);
 
-            /*if(is_null($profile)) {
-                $this->profileService->forceDelete($profile);
-            }*/
             $this->getEntityManager()->getConnection()->rollBack();
             return $exception;
         }
@@ -66,41 +88,19 @@ class UserRepository  {
 
     /**
      * @param  User $user
-     * @param  $profile
      * @return array|null|User
      * @throws \Doctrine\DBAL\ConnectionException
      */
-    public function enableUser(User $user, $profile) {
+    public function enableUser(User $user) {
         $this->getEntityManager()->getConnection()->beginTransaction();
 
         try {
             $this->getEntityManager()->persist($user);
 
-            /*try {
-                $this->getEntityManager()->flush();
-                //$result = $this->profileService->enabling($profile, $user, 'enable');
-                $result = null;
-                if(!$result || is_null($result)){
-                    $exception = array(
-                        'backtrace'        => '',
-                        'file'             => 'UserRepository',
-                        'line'             => '86',
-                        'exceptionMessage' => 'Failed save of enabling Profile'
-                    );
-                    $this->getEntityManager()->getConnection()->rollBack();
-                    return $exception;
-                }
-            } catch (\Exception $e) {
-                $exception = LogUtils::getFormattedExceptions($e);
-
-                $this->getEntityManager()->getConnection()->rollBack();
-                return $exception;
-            }*/
-
             $this->getEntityManager()->getConnection()->commit();
 
         } catch (\Exception $e) {
-            $exception = LogUtils::getFormattedExceptions($e);
+            $exception = Utils::getFormattedExceptions($e);
 
             $this->getEntityManager()->getConnection()->rollBack();
             return $exception;
@@ -109,6 +109,27 @@ class UserRepository  {
         return $user;
     }
 
+    ///////////////////////////////////////////
+    /// FIND FUNCTIONS
+
+    /**
+     * Find one object by attributes.
+     * @param array $criteria
+     * @return User|null
+     */
+    public function findOne(array $criteria) {
+        $object = null;
+
+        if(count($criteria) > 0) {
+
+            /** @var User $object */
+            $object = $this->findOneBy(
+                $criteria
+            );
+        }
+
+        return $object;
+    }
 
     /**
      * Find an user given its email.
@@ -147,14 +168,13 @@ class UserRepository  {
 
     }
 
-
     /**
      * @return array|mixed
+     * @throws \Exception
      */
     public function findAllOldPending () {
 
         $date    = new \DateTime();
-        $results = array();
 
         $oldDate = $date->modify('-1 year')->format('Y-m-d');
 
@@ -165,9 +185,7 @@ class UserRepository  {
             ->setParameter('oldDate', $oldDate)
         ;
 
-
         $results = $qb->getQuery()->getResult();
-
 
         return $results;
     }

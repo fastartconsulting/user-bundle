@@ -108,4 +108,19 @@ class Utils{
 
         return true;
     }
+
+    public static function getFormattedExceptions(\Exception $e) {
+        $exception = array();
+
+        if(!is_null($e)) {
+            $exception = array(
+                'backtrace'        => $e->getTraceAsString(),
+                'file'             => $e->getFile(),
+                'line'             => $e->getLine(),
+                'exceptionMessage' => $e->getMessage()
+            );
+        }
+
+        return $exception;
+    }
 }
