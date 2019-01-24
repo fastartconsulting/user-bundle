@@ -286,35 +286,24 @@ class UserService {
      * @param  User $user
      * @param  $token
      * @return User|null $user
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     public function sendMailRegistrationConfirm(User $user, $token) {
         $url = $this->urlConfirmRegistration($user, $token);
 
-        try {
-            $message = \Swift_Message::newInstance()
-                ->setSubject("Registration confirm")
-                ->setFrom([$this->administration_address => $this->sender_name])
-                ->setTo($user->getEmail())
-                ->setContentType('text/html')
-                ->setBody($this->templating->render(
-                    "email/registration.email.twig",
-                    array(
-                        'user'              => $user,
-                        'confirmationUrl'   => $url
-                    )
-                ))
-            ;
+        $subject = "Registration confirm";
+        $recipient = [$this->administration_address => $this->sender_name];
+        $body = $this->templating->render(
+            "email/registration.email.twig",
+            array(
+                'user' => $user,
+                'confirmationUrl'   => $url
+            )
+        );
 
-            if(!Utils::checkEmailString($user->getEmail())) {
-                return null;
-            }
-
-            else {
-                if(!$this->swiftMailer->send($message))
-                    return null;
-            }
-
-        } catch (\Exception $e) {
+        if(!$this->emailProcess($recipient, $subject, $body, $user)) {
             return null;
         }
 
@@ -325,36 +314,22 @@ class UserService {
      * Sends the registration mail that confirm successful registration
      * @param User $user
      * @return bool
-     * @throws \Doctrine\DBAL\ConnectionException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     private function sendMailRegistrationSuccessful(User $user) {
 
-        try {
-            $message = \Swift_Message::newInstance()
-                ->setSubject("Registration completed successfully")
-                ->setFrom([$this->administration_address => $this->sender_name])
-                ->setTo($user->getEmail())
-                ->setContentType('text/html')
-                ->setBody($this->templating->render(
-                    "email/registration_successful.email.twig",
-                    array(
-                        'user' => $user
-                    )
-                ))
-            ;
+        $subject = "Registration completed successfully";
+        $recipient = [$this->administration_address => $this->sender_name];
+        $body = $this->templating->render(
+            "email/registration_successful.email.twig",
+            array(
+                'user' => $user
+            )
+        );
 
-            if(!Utils::checkEmailString($user->getEmail())) {
-                return false;
-            }
-
-            else {
-                if(!$this->swiftMailer->send($message))
-                    return false;
-            }
-
-        } catch (\Exception $e) {
-
-
+        if(!$this->emailProcess($recipient, $subject, $body, $user)) {
             return false;
         }
 
@@ -367,6 +342,9 @@ class UserService {
      * @param  string $token
      * @return bool
      * @throws \Doctrine\DBAL\ConnectionException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     public function confirmCreate(User $user, $token) {
         if($user->getConfirmationToken() != $token)
@@ -429,38 +407,25 @@ class UserService {
      * Sends the reset mail asking to confirm the password reset
      * @param User $user
      * @return User|null $user
-     * @throws \Doctrine\DBAL\ConnectionException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     private function sendMailResetConfirm(User $user) {
         $token = $this->confirmationToken($user);
         $url = $this->urlConfirmReset($user, $token);
 
-        try {
-            $message = \Swift_Message::newInstance()
-                ->setSubject("Reset password")
-                ->setFrom([$this->administration_address => $this->sender_name])
-                ->setTo($user->getEmail())
-                ->setContentType('text/html')
-                ->setBody($this->templating->render(
-                    "email/password_resetting.email.twig",
-                    array(
-                        'user'              => $user,
-                        'confirmationUrl'   => $url
-                    )
-                ))
-            ;
+        $subject = "Reset password";
+        $recipient = [$this->administration_address => $this->sender_name];
+        $body = $this->templating->render(
+            "email/password_resetting.email.twig",
+            array(
+                'user' => $user,
+                'confirmationUrl'   => $url
+            )
+        );
 
-            if(!Utils::checkEmailString($user->getEmail())) {
-                return null;
-            }
-            else {
-                if(!$this->swiftMailer->send($message))
-                    return null;
-            }
-
-        } catch (\Exception $e) {
-
-
+        if(!$this->emailProcess($recipient, $subject, $body, $user)) {
             return null;
         }
 
@@ -495,34 +460,21 @@ class UserService {
      * Sends the reset mail that confirm successful password reset
      * @param User $user
      * @return bool
-     * @throws \Doctrine\DBAL\ConnectionException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     private function sendMailResetSuccessful(User $user) {
-        try {
-            $message = \Swift_Message::newInstance()
-                ->setSubject("Password resetting completed successfully")
-                ->setFrom([$this->administration_address => $this->sender_name])
-                ->setTo($user->getEmail())
-                ->setContentType('text/html')
-                ->setBody($this->templating->render(
-                    "email/password_resetting_successful.email.twig",
-                    array(
-                        'user' => $user
-                    )
-                ))
-            ;
+        $subject = "Password resetting completed successfully";
+        $recipient = [$this->administration_address => $this->sender_name];
+        $body = $this->templating->render(
+            "email/password_resetting_successful.email.twig",
+            array(
+                'user' => $user
+            )
+        );
 
-            if(!Utils::checkEmailString($user->getEmail())) {
-                return false;
-            }
-            else {
-                if(!$this->swiftMailer->send($message))
-                    return false;
-            }
-
-        } catch (\Exception $e) {
-
-
+        if(!$this->emailProcess($recipient, $subject, $body, $user)) {
             return false;
         }
 
@@ -551,8 +503,9 @@ class UserService {
      * @param User $user
      * @param string $token
      * @return bool
-     * @throws \Doctrine\DBAL\ConnectionException
-     * @throws \Exception
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     public function confirmReset(User $user, $token) {
         if($user->getConfirmationToken() != $token)
@@ -609,42 +562,58 @@ class UserService {
      * @param User $user
      * @param $email
      * @return User|null $user
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     public function sendMailChangeEmailConfirm(User $user, $email) {
+        $subject = "Change email";
         $token = $this->confirmationToken($user);
+        $recipient = [$this->administration_address => $this->sender_name];
         $url = $this->urlConfirmChangeEmail($user, $email, $token);
+        $body = $this->templating->render(
+            "email/change_email.email.twig",
+            array(
+                'user'              => $user,
+                'email'             => $email,
+                'confirmationUrl'   => $url
+            )
+        );
 
-        try {
-            $message = \Swift_Message::newInstance()
-                ->setSubject("Change email")
-                ->setFrom([$this->administration_address => $this->sender_name])
-                ->setTo($user->getEmail())
-                ->setContentType('text/html')
-                ->setBody($this->templating->render(
-                    "email/change_email.email.twig",
-                    array(
-                        'user'              => $user,
-                        'email'             => $email,
-                        'confirmationUrl'   => $url
-                    )
-                ))
-            ;
-
-            if(!Utils::checkEmailString($user->getEmail())) {
-                return null;
-            }
-            else {
-                if(!$this->swiftMailer->send($message))
-                    return null;
-            }
-
-        } catch (\Exception $e) {
-
-
+        if(!$this->emailProcess($recipient, $subject, $body, $user)) {
             return null;
         }
 
         return $user;
+    }
+
+    /* Email process */
+    /**
+     * @param null $recipient
+     * @param $subject
+     * @param $body
+     * @param User $user
+     * @return bool
+     */
+    public function emailProcess($recipient = null, $subject, $body, User $user = null) {
+        $message = \Swift_Message::newInstance()
+            ->setSubject($subject)
+            ->setFrom($recipient)
+            ->setTo($user->getEmail())
+            ->setContentType('text/html')
+            ->setBody($body)
+        ;
+
+        if(!Utils::checkEmailString($user->getEmail())) {
+            return false;
+        }
+        else {
+            if (!$this->swiftMailer->send($message)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }
