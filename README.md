@@ -85,7 +85,7 @@ fos_user:
     firewall_name: api                                  # Seems to be used when registering user/reseting password,
       # but since there is no "login", as so it seems to be useless in
     # our particular context, but still required by "FOSUserBundle"
-    user_class: FAC/UserBundle\Entity\User
+    user_class: FAC\UserBundle\Entity\User
 
     # This config is used to user confirmation by sending email
     registration:
@@ -117,8 +117,8 @@ fos_oauth_server:
 nelmio_api_doc:
   documentation:
     info:
-      title: UserBundle
-      description: This is an awesome userbundle app!
+      title: FastArt Bundles
+      description: This is an awesome bundles app!
       version: 1.0.0
   areas:
     path_patterns:
@@ -131,10 +131,19 @@ nelmio_api_doc:
 - Configure your application's routing.yml
 
 ```
+fos_oauth_server_token:
+    resource: "@FOSOAuthServerBundle/Resources/config/routing/token.xml"
+    prefix:   /public
+
+fos_oauth_server_authorize:
+    resource: "@FOSOAuthServerBundle/Resources/config/routing/authorize.xml"
+    prefix:   /private
+
 FACUserBundle:
     resource: '@FACUserBundle/Controller/'
     type: annotation
-    
+    prefix: /
+
 app.swagger_ui:
     path: /doc
     methods: GET
@@ -144,12 +153,9 @@ app.swagger_ui:
 - Configure your application's services.yml
 
 ```
-fos_oauth_server.controller.token:
-        class: FAC\UserBundle\Controller\TokenController
-        public: true
-        tags: ['controller.service_arguments']
-        arguments:
-            $container: '@service_container'
+######################################
+# UserBundle
+######################################
 
 
 fos_oauth_server.controller.authorize:
@@ -158,6 +164,119 @@ fos_oauth_server.controller.authorize:
     tags: ['controller.service_arguments']
     arguments:
         $container: '@service_container'
+
+FAC\UserBundle\:
+    resource: '../../src/fastartconsulting/UserBundle/*'
+
+FAC\UserBundle\Controller\:
+    resource: '../../src/fastartconsulting/UserBundle/Controller'
+    public: true
+    tags: ['controller.service_arguments']
+
+FAC\UserBundle\Service\UserService:
+    arguments:
+        $emailProcess: '@fac_user_bundle.email_service'
+```
+
+- Configure your application's security.yml
+```
+# To get started with security, check out the documentation:
+# https://symfony.com/doc/current/security.html
+security:
+
+    encoders:
+        FOS\UserBundle\Model\UserInterface: bcrypt
+
+    role_hierarchy:
+        ROLE_ADMIN:       ROLE_USER
+        ROLE_SUPER_ADMIN: ROLE_ADMIN
+
+    # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
+    providers:
+        in_memory:
+            memory: ~
+        fos_userbundle:
+            id: fos_user.user_provider.username_email
+
+    firewalls:
+        service:
+            entry_point: FAC\UserBundle\Security\AuthenticationEntryPoint
+            access_denied_handler: FAC\UserBundle\Security\AccessDeniedHandler
+            pattern: ^/public
+            security: false
+
+        api:
+            entry_point: FAC\UserBundle\Security\AuthenticationEntryPoint
+            access_denied_handler: FAC\UserBundle\Security\AccessDeniedHandler
+            pattern: ^/private                         # All URLs are protected
+            fos_oauth: true                            # OAuth2 protected resource
+            stateless: true                            # Do no set session cookies
+            anonymous: false                           # Anonymous access is not allowed
+            context: oauth_private
+
+        admin:
+            entry_point: FAC\UserBundle\Security\AuthenticationEntryPoint
+            access_denied_handler: FAC\UserBundle\Security\AccessDeniedHandler
+            pattern: ^/admin                           # All URLs are protected
+            fos_oauth: true                            # OAuth2 protected resource
+            stateless: true                            # Do no set session cookies
+            anonymous: false                           # Anonymous access is not allowed
+            context: oauth_admin
+
+        super:
+            entry_point: FAC\UserBundle\Security\AuthenticationEntryPoint
+            access_denied_handler: FAC\UserBundle\Security\AccessDeniedHandler
+            pattern: ^/super                           # All URLs are protected
+            fos_oauth: true                            # OAuth2 protected resource
+            stateless: true                            # Do no set session cookies
+            anonymous: false                           # Anonymous access is not allowed
+            context: oauth_super
+
+
+        # disables authentication for assets and the profiler, adapt it according to your needs
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+            anonymous: ~
+            access_denied_handler: FAC\UserBundle\Security\AccessDeniedHandler
+            # activate different ways to authenticate
+
+            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
+            #http_basic: ~
+
+            # https://symfony.com/doc/current/security/form_login_setup.html
+            #form_login: ~
+
+        oauth_token:                                   # Everyone can access the access token URL.
+            pattern: ^/oauth/v2/token
+            security: false
+
+        oauth_authorize:
+            pattern: ^/oauth/v2/auth
+            form_login:
+                provider: fos_userbundle
+                check_path: fos_user_security_login
+                login_path: fos_user_security_check
+                csrf_token_generator: security.csrf.token_manager
+            anonymous: true
+            context: test_connect
+
+        #api:
+        #    pattern: ^/
+        #    fos_oauth: true                            # OAuth2 protected resource
+        #    stateless: true                            # Do no set session cookies
+        #    anonymous: false                           # Anonymous access is not allowed
+
+    access_control:
+        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/oauth/v2/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/public, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/private, role: ROLE_USER }
+        - { path: ^/admin, role: ROLE_ADMIN }
+        - { path: ^/super, role: ROLE_SUPER_ADMIN }
+
 ```
 
 - Run Server and Enjoy ;) 

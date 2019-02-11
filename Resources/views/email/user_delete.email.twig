@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+{% block subject %}{{ subject }}{% endblock %}
+
+{% block body_text %}
+    {% autoescape false %}
+        {% for message in messages %}
+            {{ message }}
+
+        {% endfor %}
+
+        the Meedox team
+
+    {% endautoescape %}
+{% endblock %}
+
+{% block body_html %}
+    {#
+        You can of course render the html directly here.
+        Including a template as done here allows keeping things DRY by using
+        the template inheritance in it
+    #}
+    {#% include 'email/password_resetting.html.twig' %#}
+
+{% endblock %}

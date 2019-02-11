@@ -2,33 +2,24 @@
 
 namespace FAC\UserBundle\Command;
 
-use LogBundle\Document\LogMonitor;
-use LogBundle\Service\LogMonitorService;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use FAC\UserBundle\Entity\User;
 use FAC\UserBundle\Service\UserService;
-use Utils\LogUtils;
 
 class UserEnabledPendingCommand extends ContainerAwareCommand  {
 
     /** @var UserService $userService */
     private $userService;
 
-    /** @var LogMonitorService $log_monitor */
-    private $log_monitor;
-
     /**
      * UserEnabledPendingCommand constructor.
      * @param UserService $userService
-     * @param LogMonitorService $logMonitorService
      */
-    public function __construct(UserService $userService,
-                                LogMonitorService $logMonitorService
+    public function __construct(UserService $userService
     ) {
         $this->userService    = $userService;
-        $this->log_monitor    = $logMonitorService;
 
         parent::__construct();
     }

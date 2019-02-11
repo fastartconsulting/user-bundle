@@ -12,7 +12,8 @@
     },
     "autoload": {
         "psr-4": {
-            "FAC\\UserBundle\\": ""
+            "FAC\\UserBundle\\": "",
+            "FAC\\EmailBundle\\": ""
         }
     },
     "license": "MIT",

@@ -2,6 +2,7 @@
 
 namespace FAC\UserBundle\Service;
 
+use FAC\UserBundle\Utils\EmailProcessInterface;
 use FAC\UserBundle\Utils\Utils;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Swift_Mailer;
@@ -20,7 +21,7 @@ class UserService {
 
     private $encoder;
 
-    private $mailer;
+    private $repository;
 
     private $uri;
 
@@ -41,43 +42,40 @@ class UserService {
 
     private $userEmailService;
 
-    private $administration_address;
-
     private $sender_name;
 
     private $swiftMailer;
+    private $emailProcess;
+
 
     /**
      * UserService constructor.
      * @param UserRepository $repository
      * @param UserManagerInterface $userManager
      * @param UserPasswordEncoderInterface $encoder
-     * @param string $mailer_user
-     * @param string $sender_name
      * @param Swift_Mailer $swift_mailer
      * @param Twig_Environment $templating
      * @param UserEmailService $userEmailService
+     * @param $emailProcess
      */
     public function __construct(
         UserRepository $repository,
         UserManagerInterface $userManager,
         UserPasswordEncoderInterface $encoder,
-        string $mailer_user,
-        string $sender_name,
         Swift_Mailer $swift_mailer,
         ///EmailService $mailer,
         Twig_Environment $templating,
-        UserEmailService $userEmailService
+        UserEmailService $userEmailService,
+        $emailProcess
     ) {
-        $this->um                = $userManager;
-        $this->encoder           = $encoder;
-        $this->administration_address = $mailer_user;
-        $this->sender_name = $sender_name;
-        $this->swiftMailer = $swift_mailer;
-        $this->repository        = $repository;
-        $this->templating        = $templating;
-        $this->userEmailService  = $userEmailService;
-        $this->uri               = "";
+        $this->um                           = $userManager;
+        $this->encoder                      = $encoder;
+        $this->swiftMailer                  = $swift_mailer;
+        $this->repository                   = $repository;
+        $this->templating                   = $templating;
+        $this->userEmailService             = $userEmailService;
+        $this->emailProcess                 = $emailProcess;
+        $this->uri                          = "";
     }
 
     /**
@@ -239,6 +237,7 @@ class UserService {
 
         $save_user = $this->repository->saveUser($user, $token, $this);
         if(is_array($save_user)) {
+            var_dump($save_user);die;
             return false;
         }
 
@@ -294,9 +293,9 @@ class UserService {
         $url = $this->urlConfirmRegistration($user, $token);
 
         $subject = "Registration confirm";
-        $recipient = [$this->administration_address => $this->sender_name];
+        $recipient = null;
         $body = $this->templating->render(
-            "email/registration.email.twig",
+            "@FACUser/email/registration.email.twig",
             array(
                 'user' => $user,
                 'confirmationUrl'   => $url
@@ -321,9 +320,9 @@ class UserService {
     private function sendMailRegistrationSuccessful(User $user) {
 
         $subject = "Registration completed successfully";
-        $recipient = [$this->administration_address => $this->sender_name];
+        $recipient = null;
         $body = $this->templating->render(
-            "email/registration_successful.email.twig",
+            "@FACUser/email/registration_successful.email.twig",
             array(
                 'user' => $user
             )
@@ -416,9 +415,9 @@ class UserService {
         $url = $this->urlConfirmReset($user, $token);
 
         $subject = "Reset password";
-        $recipient = [$this->administration_address => $this->sender_name];
+        $recipient = null;
         $body = $this->templating->render(
-            "email/password_resetting.email.twig",
+            "@FACUser/email/password_resetting.email.twig",
             array(
                 'user' => $user,
                 'confirmationUrl'   => $url
@@ -466,9 +465,9 @@ class UserService {
      */
     private function sendMailResetSuccessful(User $user) {
         $subject = "Password resetting completed successfully";
-        $recipient = [$this->administration_address => $this->sender_name];
+        $recipient = null;
         $body = $this->templating->render(
-            "email/password_resetting_successful.email.twig",
+            "@FACUser/email/password_resetting_successful.email.twig",
             array(
                 'user' => $user
             )
@@ -506,6 +505,7 @@ class UserService {
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws \Exception
      */
     public function confirmReset(User $user, $token) {
         if($user->getConfirmationToken() != $token)
@@ -569,10 +569,10 @@ class UserService {
     public function sendMailChangeEmailConfirm(User $user, $email) {
         $subject = "Change email";
         $token = $this->confirmationToken($user);
-        $recipient = [$this->administration_address => $this->sender_name];
+        $recipient = null;
         $url = $this->urlConfirmChangeEmail($user, $email, $token);
         $body = $this->templating->render(
-            "email/change_email.email.twig",
+            "@FACUser/email/change_email.email.twig",
             array(
                 'user'              => $user,
                 'email'             => $email,
@@ -593,27 +593,12 @@ class UserService {
      * @param $subject
      * @param $body
      * @param User $user
+     * @param null $when
+     * @param null $sendOn
      * @return bool
      */
-    public function emailProcess($recipient = null, $subject, $body, User $user = null) {
-        $message = \Swift_Message::newInstance()
-            ->setSubject($subject)
-            ->setFrom($recipient)
-            ->setTo($user->getEmail())
-            ->setContentType('text/html')
-            ->setBody($body)
-        ;
-
-        if(!Utils::checkEmailString($user->getEmail())) {
-            return false;
-        }
-        else {
-            if (!$this->swiftMailer->send($message)) {
-                return false;
-            }
-        }
-
-        return true;
+    public function emailProcess($recipient = null, $subject, $body, User $user = null, $when = null, $sendOn = null)
+    {
+        return $this->emailProcess->emailProcess($recipient, $subject, $body, $user, $when, $sendOn);
     }
-
 }

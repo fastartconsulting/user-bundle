@@ -3,7 +3,7 @@
 namespace FAC\UserBundle\Controller;
 
 
-use Exceptions\ValidationException;
+use FAC\UserBundle\Exceptions\ValidationException;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
 use Symfony\Component\HttpFoundation\JsonResponse;

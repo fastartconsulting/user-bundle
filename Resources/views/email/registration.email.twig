@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+{% block subject %}Registration confirm{% endblock %}
+
+{% block body_text %}
+    {% autoescape false %}
+        Hello {{ user.username }} !
+
+        Confirm your registration clicking: <a href="{{ confirmationUrl }}">{{ confirmationUrl }}</a>
+
+        Greetings,
+        the FACUserBundle team
+
+
+        {#% autoescape false %}
+            {{ 'resetting.email.message'|trans({'%username%': user.username, '%confirmationUrl%': confirmationUrl}) }}
+        {% endautoescape %#}
+
+    {% endautoescape %}
+{% endblock %}

@@ -1,6 +1,6 @@
 <?php
 
-namespace Exceptions;
+namespace FAC\UserBundle\Exceptions;
 
 
 use Symfony\Component\Translation\TranslatorInterface;
