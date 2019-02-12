@@ -25,7 +25,7 @@ class UserController extends FOSRestController {
      * Action used to get a User.
      *
      * @Rest\Get("/admin/user/{id_user}")
-     * @ParamConverter("user", class="UserBundle:User", options={"id" = "id_user"})
+     * @ParamConverter("user", class="FACUserBundle:User", options={"id" = "id_user"})
      *
      * @SWG\Response(
      *     response=400,
@@ -71,6 +71,7 @@ class UserController extends FOSRestController {
         if(is_null($user)){
             return $response->getResponse(array(), "data.not.found.404",404);
         }
+
 
         return $response->getResponse($user->adminSerializer());
     }
@@ -175,7 +176,7 @@ class UserController extends FOSRestController {
      * Confirm a new user account.
      *
      * @Rest\Get("/public/user/confirm/{id_user}/{token}")
-     * @ParamConverter("user", class="UserBundle:User", options={"id" = "id_user"})
+     * @ParamConverter("user", class="FACUserBundle:User", options={"id" = "id_user"})
      *
      * @SWG\Response(
      *     response=400,
@@ -376,7 +377,7 @@ class UserController extends FOSRestController {
      * Reset password confirm.
      *
      * @Rest\Post("/public/user/reset/confirm/{id_user}/{token}")
-     * @ParamConverter("user", class="UserBundle:User", options={"id" = "id_user"})
+     * @ParamConverter("user", class="FACUserBundle:User", options={"id" = "id_user"})
      *
      * @SWG\Parameter(
      *     name="new_password",
@@ -820,7 +821,7 @@ class UserController extends FOSRestController {
      * Change email confirm.
      *
      * @Rest\Get("/public/user/change-email/confirm/{id_user}/{email}/{token}")
-     * @ParamConverter("user", class="UserBundle:User", options={"id" = "id_user"})
+     * @ParamConverter("user", class="FACUserBundle:User", options={"id" = "id_user"})
      *
      * @SWG\Response(
      *     response=400,

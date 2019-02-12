@@ -1,12 +1,13 @@
-{% extends 'base.html.twig' %}
-{% block subject %}{{ subject }}{% endblock %}
+{% block subject %}Registration completed successfully{% endblock %}
 
 {% block body_text %}
     {% autoescape false %}
-        {% for message in messages %}
-            {{ message }}
+        Hello {{ user.username }} !
 
-        {% endfor %}
+        Registration completed successfully
+
+        Greetings,
+        the Meedox team
 
 
         {#% autoescape false %}

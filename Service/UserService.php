@@ -237,7 +237,6 @@ class UserService {
 
         $save_user = $this->repository->saveUser($user, $token, $this);
         if(is_array($save_user)) {
-            var_dump($save_user);die;
             return false;
         }
 
