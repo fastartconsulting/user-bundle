@@ -166,16 +166,16 @@ fos_oauth_server.controller.authorize:
         $container: '@service_container'
 
 FAC\UserBundle\:
-    resource: '../../src/fastartconsulting/UserBundle/*'
+    resource: '../../vendor/fastartconsulting/user-bundle/*'
 
 FAC\UserBundle\Controller\:
-    resource: '../../src/fastartconsulting/UserBundle/Controller'
+    resource: '../../vendor/fastartconsulting/user-bundle/Controller'
     public: true
     tags: ['controller.service_arguments']
 
 FAC\UserBundle\Service\UserService:
     arguments:
-        $emailProcess: '@fac_user_bundle.email_service'
+        $emailProcess: 'FAC\UserBundle\Service\UserService'
 ```
 
 - Configure your application's security.yml
